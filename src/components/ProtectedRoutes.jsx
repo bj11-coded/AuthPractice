@@ -1,8 +1,10 @@
 import React from 'react'
 import { useAuth } from '../hooks/context/AuthContext'
-import { Navigate } from 'react-router-dom';
+// 1. Import Outlet
+import { Navigate, Outlet } from 'react-router-dom'; 
 
-const ProtectedRoutes = ({ children }) => {
+// 2. Remove { children } from props
+const ProtectedRoutes = () => { 
 
     const { user, loading } = useAuth();
 
@@ -15,6 +17,7 @@ const ProtectedRoutes = ({ children }) => {
     }
 
     if (!user) {
+        // You might want to redirect to '/login' instead of '/'
         return (
             <>
                 <Navigate to="/" replace />
@@ -22,8 +25,8 @@ const ProtectedRoutes = ({ children }) => {
         )
     }
 
-    return children;
-
+    // 3. Render <Outlet /> instead of children
+    return <Outlet />;
 }
 
 export default ProtectedRoutes
