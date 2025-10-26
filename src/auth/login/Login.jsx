@@ -1,23 +1,26 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
-  const { login, error, loading, token } = useAuth();
+  const { login, error, loading, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-const navigator = useNavigate();
+  const navigator = useNavigate();
+  
+ const handleSubmit =  (e) => {
+  e.preventDefault();
+login(email, password);
+  
+};
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    login(email, password);
-  };
 
-  useEffect(()=>{
-    if(token){
-        navigator('/dashboard');
+
+  useEffect(() => {
+    if (user) {
+      navigator("/dashboard", { replace: true });
     }
-  })
+  }, [user, navigator])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -32,7 +35,7 @@ const navigator = useNavigate();
         {error && (
           <p className="text-red-600 text-center mb-4 font-medium">{error}</p>
         )}
-        
+
 
         <div className="mb-4">
           <label className="block text-gray-600 mb-1">Email</label>
@@ -61,11 +64,10 @@ const navigator = useNavigate();
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2 rounded-lg text-white font-medium transition ${
-            loading
+          className={`w-full py-2 rounded-lg text-white font-medium transition ${loading
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
-          }`}
+            }`}
         >
           {loading ? "Logging in..." : "Login"}
         </button>
