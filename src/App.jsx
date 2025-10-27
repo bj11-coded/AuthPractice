@@ -5,6 +5,7 @@ import Register from './auth/register/register'
 import ForgotPassword from './auth/forgotPassword/forgotpassword'
 import ProtectedRoutes from './components/ProtectedRoutes'
 import Dashboard from './components/Dashboard/Dashboard'
+import NotFound from './utils/NotFound';
 
 // 2. Define your complete route configuration
 const appRoutes = [
