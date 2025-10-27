@@ -8,6 +8,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialAuthState);
   const apiUrl = import.meta.env.VITE_API_URL;
+  console.log("apiUrl", apiUrl)
 
   const axiosInstance = axios.create({
     baseURL: apiUrl,
@@ -19,17 +20,16 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGIN_START" });
     try {
       const { data } = await axiosInstance.post("/user/login", { email, password });
-    
+    console.log("logged respioinse",data)
       if (data) {
 
-        Cookies.set("token", data.payload.accessToken, { expires: 7, secure: true });
-        Cookies.set("user", JSON.stringify(data.payload.user), { expires: 7 });
+        Cookies.set("token", data.accessToken, { expires: 7, secure: true });
+        // Cookies.set("user", JSON.stringify(data), { expires: 7 });
 
         dispatch({
           type: "LOGIN_SUCCESS",
-          payload: { user: data.payload.user, token: data.payload.accessToken },
+          payload: {  token: data.token },
         });
-        return true;
       } else {
         throw new Error(data.message || "Invalid credentials");
       }
@@ -37,23 +37,22 @@ export const AuthProvider = ({ children }) => {
       const message =
          error.message || "Login failed";
       dispatch({ type: "LOGIN_FAILURE", payload: message });
-      return false;
     }
   };
 
   const logout = () => {
     Cookies.remove("token");
-    Cookies.remove("user");
+    // Cookies.remove("user");
     dispatch({ type: "LOGOUT" });
   };
 
   useEffect(() => {
     const token = Cookies.get("token");
-    const user = Cookies.get("user");
+    // const user = Cookies.get("user");
     if (token) {
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { token , user},
+        payload: { token },
       });
     }
   }, []);
