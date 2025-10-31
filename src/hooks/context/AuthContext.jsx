@@ -20,15 +20,15 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: "LOGIN_START" });
     try {
       const { data } = await axiosInstance.post("/user/login", { email, password });
-    console.log("logged respioinse",data)
+    console.log("logged respioinse",data.payload)
       if (data) {
 
-        Cookies.set("token", data.accessToken, { expires: 7, secure: true });
-        // Cookies.set("user", JSON.stringify(data), { expires: 7 });
+        Cookies.set("token", data.payload.accessToken, { expires: 7, secure: true });
+        Cookies.set("user", JSON.stringify(data.payload.user), { expires: 7 });
 
         dispatch({
           type: "LOGIN_SUCCESS",
-          payload: {  token: data.token },
+          payload: { token: data.payload.accessToken, user: data.payload.user },
         });
       } else {
         throw new Error(data.message || "Invalid credentials");
@@ -42,17 +42,17 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     Cookies.remove("token");
-    // Cookies.remove("user");
+    Cookies.remove("user");
     dispatch({ type: "LOGOUT" });
   };
 
   useEffect(() => {
     const token = Cookies.get("token");
-    // const user = Cookies.get("user");
-    if (token) {
+    const user = Cookies.get("user");
+    if (token && user) {
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { token },
+        payload: { token, user: JSON.parse(user) },
       });
     }
   }, []);

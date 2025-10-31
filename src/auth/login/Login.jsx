@@ -14,7 +14,7 @@ function Login() {
 
   };
 
-
+  console.log(user)
 
   useEffect(() => {
     if (user) {
